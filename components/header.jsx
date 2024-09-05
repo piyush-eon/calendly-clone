@@ -11,7 +11,7 @@ async function Header() {
   const user = await checkUser();
 
   return (
-    <nav className="mx-auto py-4 px-4 flex justify-between items-center">
+    <nav className="mx-auto py-4 px-4 flex justify-between items-center shadow-md border-b-2">
       <Link href="/" className="flex items-center">
         <Image
           src="/logo.png"
@@ -29,7 +29,7 @@ async function Header() {
           </SignInButton>
         </SignedOut>
         <SignedIn>
-          <Link href="/create-event">
+          <Link href="/events/create">
             <Button variant="default" className="flex items-center gap-2">
               <PenBox size={18} />
               <span className="hidden sm:inline">Create Event</span>

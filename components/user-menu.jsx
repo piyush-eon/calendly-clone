@@ -1,19 +1,9 @@
 "use client";
 
 import { UserButton } from "@clerk/nextjs";
-import { BriefcaseBusiness } from "lucide-react";
+import { ChartNoAxesGantt, PhoneCall } from "lucide-react";
 
 const UserMenu = () => {
-  // useEffect(() => {
-  //   (async () => {
-  //     const { data } = await axios.post("/api/user", {
-  //       sessionId,
-  //     });
-
-  //     console.log(data);
-  //   })();
-  // }, []);
-
   return (
     <UserButton
       appearance={{
@@ -24,9 +14,9 @@ const UserMenu = () => {
     >
       <UserButton.MenuItems>
         <UserButton.Link
-          label="My Jobs"
-          labelIcon={<BriefcaseBusiness size={15} />}
-          href="/my-jobs"
+          label="My Events"
+          labelIcon={<ChartNoAxesGantt size={15} />}
+          href="/events"
         />
         <UserButton.Action label="manageAccount" />
       </UserButton.MenuItems>

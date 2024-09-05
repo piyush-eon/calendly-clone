@@ -31,7 +31,6 @@ model Event {
   id          String   @id @default(uuid())
   title       String
   description String?
-  location    String?
   duration    Int
   userId      String
   user        User     @relation("UserEvents", fields: [userId], references: [id])
