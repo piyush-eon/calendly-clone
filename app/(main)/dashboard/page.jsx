@@ -1,45 +1,37 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { updateUsername } from "@/app/actions/users";
-
-const usernameSchema = z.object({
-  username: z
-    .string()
-    .min(3)
-    .max(20)
-    .regex(
-      /^[a-zA-Z0-9_]+$/,
-      "Username can only contain letters, numbers, and underscores"
-    ),
-});
+import { BarLoader } from "react-spinners";
+import useFetch from "@/hooks/use-fetch";
+import { usernameSchema } from "@/app/lib/validators";
 
 export default function DashboardPage() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(usernameSchema),
-    defaultValues: { username: user?.username || "" },
   });
 
+  useEffect(() => {
+    setValue("username", user?.username);
+  }, [isLoaded]);
+
+  const { loading, error, fn: fnUpdateUsername } = useFetch(updateUsername);
+
   const onSubmit = async (data) => {
-    try {
-      await updateUsername(data.username);
-      // Show success message
-    } catch (error) {
-      // Show error message
-      console.error("Failed to update username:", error);
-    }
+    await fnUpdateUsername(data.username);
   };
 
   return (
@@ -56,22 +48,30 @@ export default function DashboardPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Update Your Username</CardTitle>
+          <CardTitle>Your Unique Link</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <Input
-                {...register("username")}
-                placeholder="Enter new username"
-              />
+              <div className="flex items-center gap-2">
+                <span>schedulrr.com/</span>
+                <Input {...register("username")} placeholder="username" />
+              </div>
               {errors.username && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.username.message}
                 </p>
               )}
+              {error && (
+                <p className="text-red-500 text-sm mt-1">{error?.message}</p>
+              )}
             </div>
-            <Button type="submit">Update Username</Button>
+            {loading && (
+              <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />
+            )}
+            <Button type="submit" disabled={loading}>
+              Update Username
+            </Button>
           </form>
         </CardContent>
       </Card>

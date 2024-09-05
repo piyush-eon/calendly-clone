@@ -1,15 +1,7 @@
-// app/actions/users.js
 "use server";
 
 import { db } from "@/lib/prisma";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { z } from "zod";
-
-const usernameSchema = z
-  .string()
-  .min(3)
-  .max(20)
-  .regex(/^[a-zA-Z0-9_]+$/);
 
 export async function updateUsername(username) {
   const { userId } = auth();
@@ -17,11 +9,9 @@ export async function updateUsername(username) {
     throw new Error("Unauthorized");
   }
 
-  const validatedUsername = usernameSchema.parse(username);
-
   // Check if username is already taken
   const existingUser = await db.user.findUnique({
-    where: { username: validatedUsername },
+    where: { username },
   });
 
   if (existingUser && existingUser.id !== userId) {
@@ -31,12 +21,12 @@ export async function updateUsername(username) {
   // Update username in database
   await db.user.update({
     where: { clerkUserId: userId },
-    data: { username: validatedUsername },
+    data: { username },
   });
 
   // Update username in Clerk
   await clerkClient.users.updateUser(userId, {
-    username: validatedUsername,
+    username,
   });
 
   return { success: true };
