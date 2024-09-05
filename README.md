@@ -1,4 +1,4 @@
-# Full Stack Calendly Clone with Nexy JS, React, TailwindCSS, Prisma, Neon, Clerk, Shadcn UI Tutorial 🔥🔥
+# Full Stack Calendly Clone with Nexy JS, React, Tailwind CSS, Prisma, Neon, Clerk, Shadcn UI Tutorial 🔥🔥
 
 ## Work in Progress
 
