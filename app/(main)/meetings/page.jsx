@@ -1,4 +1,3 @@
-// app/(main)/meetings/page.jsx
 import { Suspense } from "react";
 import { getUserMeetings } from "@/actions/meetings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
