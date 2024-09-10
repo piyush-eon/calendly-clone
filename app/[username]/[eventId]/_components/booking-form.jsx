@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DayPicker } from "react-day-picker";
@@ -12,26 +12,34 @@ import { createBooking } from "@/actions/bookings";
 import { bookingSchema } from "@/app/lib/validators";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import "react-day-picker/style.css";
+import useFetch from "@/hooks/use-fetch";
 
 export default function BookingForm({ event, availability }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [bookingConfirmation, setBookingConfirmation] = useState(null);
-
-  console.log(availability, isSubmitting);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     resolver: zodResolver(bookingSchema),
-    defaultValues: {
-      date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
-      time: selectedTime || "",
-    },
   });
+
+  useEffect(() => {
+    if (selectedDate) {
+      setValue("date", format(selectedDate, "yyyy-MM-dd"));
+    }
+  }, [selectedDate, setValue]);
+
+  useEffect(() => {
+    if (selectedTime) {
+      setValue("time", selectedTime);
+    }
+  }, [selectedTime, setValue]);
+
+  const { loading, error, data, fn: fnCreateBooking } = useFetch(createBooking);
 
   const onSubmit = async (data) => {
     console.log("Form submitted with data:", data);
@@ -41,40 +49,21 @@ export default function BookingForm({ event, availability }) {
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      const startTime = new Date(
-        `${format(selectedDate, "yyyy-MM-dd")}T${selectedTime}`
-      );
-      const endTime = new Date(startTime.getTime() + event.duration * 60000);
+    const startTime = new Date(
+      `${format(selectedDate, "yyyy-MM-dd")}T${selectedTime}`
+    );
+    const endTime = new Date(startTime.getTime() + event.duration * 60000);
 
-      const bookingData = {
-        eventId: event.id,
-        name: data.name,
-        email: data.email,
-        startTime: startTime.toISOString(),
-        endTime: endTime.toISOString(),
-        additionalInfo: data.additionalInfo,
-      };
+    const bookingData = {
+      eventId: event.id,
+      name: data.name,
+      email: data.email,
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      additionalInfo: data.additionalInfo,
+    };
 
-      const result = await createBooking(bookingData);
-
-      if (result.success) {
-        setBookingConfirmation({
-          message: "Booking successful!",
-          meetLink: result.meetLink,
-        });
-      } else {
-        throw new Error(result.error || "Booking failed");
-      }
-    } catch (error) {
-      console.error("Error creating booking:", error);
-      setBookingConfirmation({
-        message: `Booking failed: ${error.message}`,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await fnCreateBooking(bookingData);
   };
 
   const availableDays = availability.map((day) => new Date(day.date));
@@ -85,22 +74,20 @@ export default function BookingForm({ event, availability }) {
       )?.slots || []
     : [];
 
-  if (bookingConfirmation) {
+  if (data) {
     return (
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-4">
-          {bookingConfirmation.message}
-        </h2>
-        {bookingConfirmation.meetLink && (
+      <div className="text-center p-10 border bg-white">
+        <h2 className="text-2xl font-bold mb-4">Booking successful!</h2>
+        {data.meetLink && (
           <p>
             Join the meeting:{" "}
             <a
-              href={bookingConfirmation.meetLink}
+              href={data.meetLink}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:underline"
             >
-              {bookingConfirmation.meetLink}
+              {data.meetLink}
             </a>
           </p>
         )}
@@ -109,90 +96,77 @@ export default function BookingForm({ event, availability }) {
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-8">
-      <div className="w-full md:w-1/2">
-        <DayPicker
-          mode="single"
-          selected={selectedDate}
-          onSelect={(date) => {
-            setSelectedDate(date);
-            setSelectedTime(null); // Reset selected time when date changes
-          }}
-          disabled={[
-            { before: new Date() },
-            // (date) =>
-            //   !availableDays.some((d) => d.getTime() === date.getTime()),
-          ]}
-          modifiers={{ available: availableDays }}
-          modifiersStyles={{
-            available: {
-              background: "lightblue",
-              borderRadius: 100,
-            },
-          }}
-          components={{
-            IconLeft: ({ ...props }) => (
-              <ChevronLeft className="h-4 w-4" {...props} />
-            ),
-            IconRight: ({ ...props }) => (
-              <ChevronRight className="h-4 w-4" {...props} />
-            ),
-          }}
-        />
-      </div>
-      <div className="w-full md:w-1/2">
-        {selectedDate && (
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-2">Available Time Slots</h3>
-            <div className="grid grid-cols-3 gap-2">
-              {timeSlots.map((slot) => (
-                <Button
-                  key={slot}
-                  variant={selectedTime === slot ? "default" : "outline"}
-                  onClick={() => setSelectedTime(slot)}
-                >
-                  {slot}
-                </Button>
-              ))}
+    <div className="flex flex-col gap-8 p-10 border bg-white">
+      <div className="md:h-96 flex flex-col md:flex-row gap-5 ">
+        <div className="w-full">
+          <DayPicker
+            mode="single"
+            selected={selectedDate}
+            onSelect={(date) => {
+              setSelectedDate(date);
+              setSelectedTime(null); // Reset selected time when date changes
+            }}
+            disabled={[{ before: new Date() }]}
+            modifiers={{ available: availableDays }}
+            modifiersStyles={{
+              available: {
+                background: "lightblue",
+                borderRadius: 100,
+              },
+            }}
+          />
+        </div>
+        <div className="w-full h-full md:overflow-scroll no-scrollbar">
+          {/* add hide scroll bar code */}
+          {selectedDate && (
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold mb-2">
+                Available Time Slots
+              </h3>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                {timeSlots.map((slot) => (
+                  <Button
+                    key={slot}
+                    variant={selectedTime === slot ? "default" : "outline"}
+                    onClick={() => setSelectedTime(slot)}
+                  >
+                    {slot}
+                  </Button>
+                ))}
+              </div>
             </div>
+          )}
+        </div>
+      </div>
+      {selectedTime && (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <Input {...register("name")} placeholder="Your Name" />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
           </div>
-        )}
-        {selectedTime && (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
             <Input
-              type="hidden"
-              {...register("date")}
-              value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
+              {...register("email")}
+              type="email"
+              placeholder="Your Email"
             />
-            <Input type="hidden" {...register("time")} value={selectedTime} />
-            <div>
-              <Input {...register("name")} placeholder="Your Name" />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
-              )}
-            </div>
-            <div>
-              <Input
-                {...register("email")}
-                type="email"
-                placeholder="Your Email"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
-              )}
-            </div>
-            <div>
-              <Textarea
-                {...register("additionalInfo")}
-                placeholder="Additional Information"
-              />
-            </div>
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? "Scheduling..." : "Schedule Event"}
-            </Button>
-          </form>
-        )}
-      </div>
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
+          </div>
+          <div>
+            <Textarea
+              {...register("additionalInfo")}
+              placeholder="Additional Information"
+            />
+          </div>
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Scheduling..." : "Schedule Event"}
+          </Button>
+        </form>
+      )}
     </div>
   );
 }

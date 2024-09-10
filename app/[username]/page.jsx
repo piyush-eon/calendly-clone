@@ -3,6 +3,21 @@ import { getUserByUsername } from "@/actions/users";
 import EventCard from "@/components/event-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+export async function generateMetadata({ params }) {
+  const user = await getUserByUsername(params.username);
+
+  if (!user) {
+    return {
+      title: "User Not Found",
+    };
+  }
+
+  return {
+    title: `${user.name}'s Profile | Your App Name`,
+    description: `Book an event with ${user.name}. View available public events and schedules.`,
+  };
+}
+
 export default async function UserProfilePage({ params }) {
   const user = await getUserByUsername(params.username);
 

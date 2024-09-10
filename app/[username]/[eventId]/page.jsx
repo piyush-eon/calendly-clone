@@ -24,20 +24,17 @@ export async function generateMetadata({ params }) {
 export default async function EventBookingPage({ params }) {
   const event = await getEventDetails(params.username, params.eventId);
   const availability = await getEventAvailability(params.eventId);
-  console.log(availability, params.eventId, "lll");
 
   if (!event) {
     notFound();
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex gap-8">
-        <EventDetails event={event} />
-        <Suspense fallback={<div>Loading booking form...</div>}>
-          <BookingForm event={event} availability={availability} />
-        </Suspense>
-      </div>
+    <div className="flex flex-col justify-center lg:flex-row px-4 py-8">
+      <EventDetails event={event} />
+      <Suspense fallback={<div>Loading booking form...</div>}>
+        <BookingForm event={event} availability={availability} />
+      </Suspense>
     </div>
   );
 }

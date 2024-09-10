@@ -51,6 +51,7 @@ export async function createBooking(bookingData) {
     });
 
     const meetLink = meetResponse.data.hangoutLink;
+    const googleEventId = meetResponse.data.id;
 
     // Create booking in database
     const booking = await db.booking.create({
@@ -59,10 +60,11 @@ export async function createBooking(bookingData) {
         userId: event.userId,
         name: bookingData.name,
         email: bookingData.email,
-        startTime: new Date(bookingData.startTime),
-        endTime: new Date(bookingData.endTime),
+        startTime: bookingData.startTime,
+        endTime: bookingData.endTime,
         additionalInfo: bookingData.additionalInfo,
         meetLink,
+        googleEventId,
       },
     });
 

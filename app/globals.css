@@ -92,3 +92,15 @@
     @apply font-extrabold bg-gradient-to-br from-blue-600 to-blue-400 bg-clip-text tracking-tighter text-transparent pb-4 pr-2;
   }
 }
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
