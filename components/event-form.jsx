@@ -1,7 +1,6 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,22 +12,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { eventSchema } from "@/app/lib/validators";
+import { createEvent } from "@/actions/events";
+import { useRouter } from "next/navigation";
+import useFetch from "@/hooks/use-fetch";
 
-const EventForm = ({ onSubmit, initialData = {} }) => {
+const EventForm = ({ onSubmitForm, initialData = {} }) => {
+  const router = useRouter();
   const {
+    register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       title: initialData.title || "",
       description: initialData.description || "",
       duration: initialData.duration || 30,
-      location: initialData.location || "",
-      isPrivate: true,
+      isPrivate: initialData.isPrivate ?? true,
     },
   });
+
+  const { loading, error, fn: fnCreateEvent } = useFetch(createEvent);
+
+  const onSubmit = async (data) => {
+    await fnCreateEvent(data);
+    if (!loading && !error) onSubmitForm();
+    router.refresh(); // Refresh the page to show updated data
+  };
 
   return (
     <form
@@ -42,13 +53,9 @@ const EventForm = ({ onSubmit, initialData = {} }) => {
         >
           Event Title
         </label>
-        <Controller
-          name="title"
-          control={control}
-          render={({ field }) => (
-            <Input id="title" {...field} className="mt-1" />
-          )}
-        />
+
+        <Input id="title" {...register("title")} className="mt-1" />
+
         {errors.title && (
           <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>
         )}
@@ -61,12 +68,11 @@ const EventForm = ({ onSubmit, initialData = {} }) => {
         >
           Description
         </label>
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <Textarea id="description" {...field} className="mt-1" />
-          )}
+
+        <Textarea
+          {...register("description")}
+          id="description"
+          className="mt-1"
         />
         {errors.description && (
           <p className="text-red-500 text-xs mt-1">
@@ -82,13 +88,16 @@ const EventForm = ({ onSubmit, initialData = {} }) => {
         >
           Duration (minutes)
         </label>
-        <Controller
-          name="duration"
-          control={control}
-          render={({ field }) => (
-            <Input id="duration" type="number" {...field} className="mt-1" />
-          )}
+
+        <Input
+          id="duration"
+          {...register("duration", {
+            valueAsNumber: true,
+          })}
+          type="number"
+          className="mt-1"
         />
+
         {errors.duration && (
           <p className="text-red-500 text-xs mt-1">{errors.duration.message}</p>
         )}
@@ -105,7 +114,10 @@ const EventForm = ({ onSubmit, initialData = {} }) => {
           name="isPrivate"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={(value) => field.onChange(value === "true")}>
+            <Select
+              onValueChange={(value) => field.onChange(value === "true")}
+              value={field.value ? "true" : "false"}
+            >
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select privacy" />
               </SelectTrigger>
@@ -118,12 +130,10 @@ const EventForm = ({ onSubmit, initialData = {} }) => {
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? "Submitting..."
-          : initialData.id
-          ? "Update Event"
-          : "Create Event"}
+      {error && <p className="text-red-500 text-xs mt-1">{error.message}</p>}
+
+      <Button type="submit" disabled={loading}>
+        {loading ? "Submitting..." : "Create Event"}
       </Button>
     </form>
   );

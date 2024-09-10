@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -14,12 +12,12 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { updateAvailability } from "@/app/actions/availability";
+import { updateAvailability } from "@/actions/availability";
 import { availabilitySchema } from "@/app/lib/validators";
 import { timeSlots } from "../data";
 import useFetch from "@/hooks/use-fetch";
 
-export default function AvailabilityForm({ initialData, userId }) {
+export default function AvailabilityForm({ initialData }) {
   const {
     register,
     control,
@@ -39,7 +37,7 @@ export default function AvailabilityForm({ initialData, userId }) {
   } = useFetch(updateAvailability);
 
   const onSubmit = async (data) => {
-    await fnupdateAvailability(userId, data);
+    await fnupdateAvailability(data);
   };
 
   const renderDayInput = (day) => {

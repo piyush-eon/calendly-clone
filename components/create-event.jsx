@@ -9,7 +9,6 @@ import {
   DrawerTitle,
   DrawerClose,
   DrawerFooter,
-  DrawerDescription,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import EventForm from "./event-form";
@@ -38,7 +37,7 @@ export default function CreateEventDrawer() {
   const handleClose = () => {
     setIsOpen(false);
     if (searchParams.get("create") === "true") {
-      router.replace(window.location.pathname);
+      router.replace(window?.location.pathname);
     }
   };
 
@@ -49,9 +48,7 @@ export default function CreateEventDrawer() {
           <DrawerTitle>Create New Event</DrawerTitle>
         </DrawerHeader>
         <EventForm
-          onSubmit={(data) => {
-            // Handle form submission
-            console.log(data);
+          onSubmitForm={() => {
             handleClose();
           }}
         />

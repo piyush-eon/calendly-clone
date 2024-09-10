@@ -1,9 +1,16 @@
-// app/actions/availability.js
 "use server";
 
 import { db } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import { startOfDay, addDays, format } from "date-fns";
 
-export async function getUserAvailability(userId) {
+export async function getUserAvailability() {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
     include: {
@@ -47,7 +54,13 @@ export async function getUserAvailability(userId) {
   return availabilityData;
 }
 
-export async function updateAvailability(userId, data) {
+export async function updateAvailability(data) {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
     include: { availability: true },
@@ -76,7 +89,7 @@ export async function updateAvailability(userId, data) {
 
   if (user.availability) {
     await db.availability.update({
-      where: { id: user.availability.id + "4" },
+      where: { id: user.availability.id },
       data: {
         timeGap: data.timeGap,
         days: {
@@ -98,4 +111,63 @@ export async function updateAvailability(userId, data) {
   }
 
   return { success: true };
+}
+
+export async function getEventAvailability(eventId) {
+  const event = await db.event.findUnique({
+    where: { id: eventId },
+    include: {
+      user: {
+        include: {
+          availability: {
+            select: {
+              days: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!event || !event.user.availability) {
+    return [];
+  }
+
+  const { availability } = event.user;
+  const startDate = startOfDay(new Date());
+  const endDate = addDays(startDate, 30); // Get availability for the next 30 days
+
+  const availableDates = [];
+
+  for (let date = startDate; date <= endDate; date = addDays(date, 1)) {
+    const dayOfWeek = format(date, "EEEE").toUpperCase();
+    const dayAvailability = availability?.days?.find(
+      (d) => d.day === dayOfWeek
+    );
+
+    if (dayAvailability) {
+      const slots = generateTimeSlots(
+        dayAvailability.startTime,
+        dayAvailability.endTime,
+        event.duration
+      );
+      availableDates.push({
+        date: format(date, "yyyy-MM-dd"),
+        slots,
+      });
+    }
+  }
+
+  return availableDates;
+}
+
+function generateTimeSlots(startTime, endTime, duration) {
+  const slots = [];
+
+  while (startTime < endTime) {
+    slots.push(startTime.toISOString().slice(11, 16));
+    startTime = new Date(startTime.getTime() + duration * 60000);
+  }
+
+  return slots;
 }

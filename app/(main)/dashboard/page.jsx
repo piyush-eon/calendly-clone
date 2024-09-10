@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { updateUsername } from "@/app/actions/users";
+import { updateUsername } from "@/actions/users";
 import { BarLoader } from "react-spinners";
 import useFetch from "@/hooks/use-fetch";
 import { usernameSchema } from "@/app/lib/validators";
@@ -26,6 +26,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setValue("username", user?.username);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded]);
 
   const { loading, error, fn: fnUpdateUsername } = useFetch(updateUsername);
@@ -54,7 +55,7 @@ export default function DashboardPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <div className="flex items-center gap-2">
-                <span>schedulrr.com/</span>
+                <span>{window?.location.origin}/</span>
                 <Input {...register("username")} placeholder="username" />
               </div>
               {errors.username && (

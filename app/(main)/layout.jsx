@@ -13,13 +13,12 @@ const navItems = [
   { href: "/availability", label: "Availability", icon: Clock },
 ];
 
-export default function AppLayout({ children, create }) {
+export default function AppLayout({ children }) {
   const pathname = usePathname();
   const { isLoaded } = useUser();
 
   return (
     <>
-      {create}
       {!isLoaded && <BarLoader width={"100%"} color="#36d7b7" />}
       <div className="flex flex-col h-screen bg-blue-50 md:flex-row">
         {/* Sidebar for medium screens and up */}

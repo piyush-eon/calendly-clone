@@ -1,0 +1,78 @@
+{
+  config: {
+    url: 'https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1',
+    method: 'POST',
+    apiVersion: '',
+    userAgentDirectives: [ [Object] ],
+    paramsSerializer: [Function (anonymous)],
+    data: {
+      summary: 'Piyush - 1:1 Guidance',
+      description: 'test',
+      start: [Object],
+      end: [Object],
+      attendees: [Array],
+      conferenceData: [Object]
+    },
+    headers: {
+      'x-goog-api-client': 'gdcl/7.2.0 gl-node/20.15.1',
+      'Accept-Encoding': 'gzip',
+      'User-Agent': 'google-api-nodejs-client/7.2.0 (gzip)',
+      Authorization: 'Bearer ya29.a0AcM612wz-alg0BaCc0LOTXfzOvudonvkZhMcFWIRFRQ6Kd0ohYVIFE90mrih-MWuFZ8xm1aC_1sfnL6TF86Ci-g5eqPBZhXI5fnY36mFZGoyC1pc6dVXXQy9eBHY5TydIXcW9-jSuF6qUaGr1FBAlVAB54i0Y8qtAXjGgJ-DYAaCgYKASYSARASFQHGX2MinEq3eMunZhI2k-Wz0huopA0177',
+      'Content-Type': 'application/json'
+    },
+    params: { conferenceDataVersion: 1 },
+    validateStatus: [Function (anonymous)],
+    retry: true,
+    body: '{"summary":"Piyush - 1:1 Guidance","description":"test","start":{"dateTime":"2024-09-08T18:19:00.000Z"},"end":{"dateTime":"2024-09-08T18:49:00.000Z"},"attendees":[{"email":"eon55dude@gmail.com"},{"email":"piyushagarwalvo@gmail.com"}],"conferenceData":{"createRequest":{"requestId":"df4a68d1-141c-43d4-83f9-99d288617de5-1725801574936"}}}',
+    responseType: 'unknown',
+    errorRedactor: [Function: defaultErrorRedactor]
+  },
+  data: {
+    kind: 'calendar#event',
+    etag: '"3451603149724000"',
+    id: 'hom1f6q7j25m9mn5pcl0g35ddo',
+    status: 'confirmed',
+    htmlLink: 'https://www.google.com/calendar/event?eid=aG9tMWY2cTdqMjVtOW1uNXBjbDBnMzVkZG8gcGl5dXNoYWdhcndhbHZvQG0',
+    created: '2024-09-08T13:19:34.000Z',
+    updated: '2024-09-08T13:19:34.862Z',
+    summary: 'Piyush - 1:1 Guidance',
+    description: 'test',
+    creator: { email: 'piyushagarwalvo@gmail.com', self: true },
+    organizer: { email: 'piyushagarwalvo@gmail.com', self: true },
+    start: { dateTime: '2024-09-08T23:49:00+05:30', timeZone: 'Asia/Kolkata' },
+    end: { dateTime: '2024-09-09T00:19:00+05:30', timeZone: 'Asia/Kolkata' },
+    iCalUID: 'hom1f6q7j25m9mn5pcl0g35ddo@google.com',
+    sequence: 0,
+    attendees: [ [Object], [Object] ],
+    hangoutLink: 'https://meet.google.com/eir-fkwg-pja',
+    conferenceData: {
+      createRequest: [Object],
+      entryPoints: [Array],
+      conferenceSolution: [Object],
+      conferenceId: 'eir-fkwg-pja'
+    },
+    reminders: { useDefault: true },
+    eventType: 'default'
+  },
+  headers: {
+    'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000',
+    'cache-control': 'no-cache, no-store, max-age=0, must-revalidate',
+    'content-encoding': 'gzip',
+    'content-type': 'application/json; charset=UTF-8',
+    date: 'Sun, 08 Sep 2024 13:19:35 GMT',
+    etag: '"3451603149724000"',
+    expires: 'Mon, 01 Jan 1990 00:00:00 GMT',
+    pragma: 'no-cache',
+    server: 'ESF',
+    'transfer-encoding': 'chunked',
+    vary: 'Origin, X-Origin, Referer',
+    'x-content-type-options': 'nosniff',
+    'x-frame-options': 'SAMEORIGIN',
+    'x-xss-protection': '0'
+  },
+  status: 200,
+  statusText: 'OK',
+  request: {
+    responseURL: 'https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1'
+  }
+}
