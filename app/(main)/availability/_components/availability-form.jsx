@@ -37,6 +37,8 @@ export default function AvailabilityForm({ initialData }) {
   } = useFetch(updateAvailability);
 
   const onSubmit = async (data) => {
+    console.log("kk");
+
     await fnupdateAvailability(data);
   };
 
@@ -44,7 +46,7 @@ export default function AvailabilityForm({ initialData }) {
     const isAvailable = watch(`${day}.isAvailable`);
 
     return (
-      <div className="flex items-center space-x-4 mb-4">
+      <div key={day} className="flex items-center space-x-4 mb-4">
         <Controller
           name={`${day}.isAvailable`}
           control={control}

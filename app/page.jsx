@@ -2,8 +2,9 @@ import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { ArrowRight, Calendar, Clock, Link, CheckCircle } from "lucide-react";
+import { ArrowRight, Calendar, Clock, LinkIcon } from "lucide-react";
 import TestimonialsCarousel from "@/components/testimonials";
+import Link from "next/link";
 
 const features = [
   {
@@ -17,7 +18,7 @@ const features = [
     description: "Define your availability to streamline scheduling",
   },
   {
-    icon: Link,
+    icon: LinkIcon,
     title: "Custom Links",
     description: "Share your personalized scheduling link",
   },
@@ -52,10 +53,11 @@ const Home = () => {
             Schedulrr helps you manage your time effectively. Create events, set
             your availability, and let others book time with you seamlessly.
           </p>
-
-          <Button size="lg" className="text-lg">
-            Get Started <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          <Link href={"/dashboard"}>
+            <Button size="lg" className="text-lg">
+              Get Started <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
         </div>
         <div className="lg:w-1/2 flex justify-center">
           <div className="relative w-full max-w-md aspect-square">
@@ -130,9 +132,11 @@ const Home = () => {
           Join thousands of professionals who trust Schedulrr for efficient time
           management.
         </p>
-        <Button size="lg" variant="secondary" className="text-blue-600">
-          Start For Free <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
+        <Link href={"/dashboard"}>
+          <Button size="lg" variant="secondary" className="text-blue-600">
+            Start For Free <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </Link>
       </div>
     </main>
   );

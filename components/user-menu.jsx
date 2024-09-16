@@ -1,7 +1,7 @@
 "use client";
 
 import { UserButton } from "@clerk/nextjs";
-import { ChartNoAxesGantt, PhoneCall } from "lucide-react";
+import { ChartNoAxesGantt } from "lucide-react";
 
 const UserMenu = () => {
   return (

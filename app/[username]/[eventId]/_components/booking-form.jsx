@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { createBooking } from "@/actions/bookings";
 import { bookingSchema } from "@/app/lib/validators";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import "react-day-picker/style.css";
 import useFetch from "@/hooks/use-fetch";
 
@@ -39,7 +38,7 @@ export default function BookingForm({ event, availability }) {
     }
   }, [selectedTime, setValue]);
 
-  const { loading, error, data, fn: fnCreateBooking } = useFetch(createBooking);
+  const { loading, data, fn: fnCreateBooking } = useFetch(createBooking);
 
   const onSubmit = async (data) => {
     console.log("Form submitted with data:", data);
