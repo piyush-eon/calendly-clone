@@ -25,14 +25,14 @@ export default function CreateEventDrawer() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    // Expose a global function to open the drawer
-    window.openCreateEventDrawer = () => setIsOpen(true);
+  // State can be exposed to our app in case we want to manually open the drawer 👇
+  // useEffect(() => {
+  //   window.openCreateEventDrawer = () => setIsOpen(true);
 
-    return () => {
-      delete window.openCreateEventDrawer;
-    };
-  }, []);
+  //   return () => {
+  //     delete window.openCreateEventDrawer;
+  //   };
+  // }, []);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -52,7 +52,7 @@ export default function CreateEventDrawer() {
             handleClose();
           }}
         />
-        <DrawerFooter>
+        <DrawerFooter className="px-6">
           <DrawerClose asChild>
             <Button variant="outline" onClick={handleClose}>
               Cancel

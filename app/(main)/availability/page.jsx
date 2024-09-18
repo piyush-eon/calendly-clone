@@ -5,7 +5,6 @@ import { defaultAvailability } from "./data";
 
 export default async function AvailabilityPage() {
   const availability = await getUserAvailability();
-  console.log(availability);
 
   return <AvailabilityForm initialData={availability || defaultAvailability} />;
 }
